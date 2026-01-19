@@ -35,6 +35,20 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    if (!email.contains('@') || !email.endsWith('.com')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email ending with .com')),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       // Attempt sign in
@@ -52,17 +66,16 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (_) => const NavigationScreen()),
         );
       } else {
-        // Show generic error message (Supabase response doesn't expose `error` here)
-        final errorMsg = 'Login failed. Please check your credentials.';
+        // Show invalid credentials message
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMsg)),
+          const SnackBar(content: Text('Invalid credentials')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          const SnackBar(content: Text('Invalid credentials')),
         );
       }
     } finally {

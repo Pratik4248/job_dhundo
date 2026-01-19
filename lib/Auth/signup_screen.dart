@@ -304,7 +304,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ),
                                   child: _isSendingVerification ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Resend confirmation email'),
                                 ),
-
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                                  },
+                                  child: const Text('Go to Login Page'),
+                                ),
                                 
                               ],
                             ),
