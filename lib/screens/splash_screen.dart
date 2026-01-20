@@ -15,8 +15,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  late Animation<double> _textAnimation;
-  bool _showSubtitle = false;
 
   @override
   void initState() {
@@ -32,23 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
       curve: Curves.easeIn,
     );
 
-    _textAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
-    );
-
     _controller.forward();
-
-    // Show subtitle after 1 second
-    Timer(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          _showSubtitle = true;
-        });
-      }
-    });
 
     _checkAuthAndNavigate();
   }

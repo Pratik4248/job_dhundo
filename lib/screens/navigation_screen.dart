@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
 import 'saved_screen.dart';

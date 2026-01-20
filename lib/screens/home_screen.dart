@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/job_provider.dart';
-import '../widgets/job_card.dart';
 import '../widgets/common_header.dart';
+import '../widgets/home_job_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,50 +17,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      // ref.read(jobProvider.notifier).loadTrending();
+      ref.read(jobProvider.notifier).loadFromHistory();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final jobs = ref.watch(jobProvider);
+
     final user = Supabase.instance.client.auth.currentUser;
-    String name = 'User!';
-    if (user != null && user.userMetadata != null && user.userMetadata!['full_name'] != null) {
+    String name = "User!";
+    if (user != null &&
+        user.userMetadata != null &&
+        user.userMetadata!['full_name'] != null) {
       name = user.userMetadata!['full_name'];
     }
+
     final title = "Hello, $name";
-return Scaffold(
-  body: Column(
-    children: [
 
-      /// HEADER
-      CommonHeader(title: title),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F7FB),
+      body: Column(
+        children: [
 
-      const SizedBox(height: 10),
+          /// 🔹 USER HEADER (UNCHANGED)
+          CommonHeader(title: title),
 
-      /// RECOMMENDATION TITLE
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Recommendation",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          const SizedBox(height: 10),
+
+          /// 🔹 RECOMMENDATION TITLE
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Recommended for you",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
           ),
-        ),
-      ),
 
-      /// JOB LIST
-      Expanded(
-        child: ListView.builder(
-          itemCount: jobs.length,
-          itemBuilder: (_, i) => JobCard(jobs[i]),
-        ),
-      ),
-    ],
-  ),
-);
+          const SizedBox(height: 10),
 
+          /// 🔹 GRID JOB CARDS
+          Expanded(
+            child: jobs.isEmpty
+                ? const Center(
+                    child: Text(
+                      "Search jobs to get personalized recommendations",
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 14,
+                      mainAxisSpacing: 14,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: jobs.length,
+                    itemBuilder: (_, i) => HomeJobCard(jobs[i]),
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 }

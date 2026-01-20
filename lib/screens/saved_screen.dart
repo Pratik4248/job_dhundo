@@ -9,7 +9,7 @@ class SavedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final saved = ref.watch(savedProvider);
+    final savedAsync = ref.watch(savedProvider);
 
     return Scaffold(
       body: Column(
@@ -17,9 +17,13 @@ class SavedScreen extends ConsumerWidget {
           CommonHeader(title: "Saved Jobs"),
           const SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
-              itemCount: saved.length,
-              itemBuilder: (_, i) => JobCard(saved[i]),
+            child: savedAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (saved) => ListView.builder(
+                itemCount: saved.length,
+                itemBuilder: (_, i) => JobCard(saved[i]),
+              ),
             ),
           ),
         ],

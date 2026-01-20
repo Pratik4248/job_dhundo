@@ -21,8 +21,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _confirmObscure = true;
 
   // Verification stage state
-  bool _awaitingVerification = false;
-  bool _verificationEmailSent = false;
   bool _signupComplete = false;
   String? _signedUpEmail;
   bool _isSendingVerification = false;
@@ -79,7 +77,6 @@ class _SignupScreenState extends State<SignupScreen> {
       // Enter verification stage. We direct the user to verify their email
       // and then come back to the app to sign in.
       setState(() {
-        _awaitingVerification = true;
         _signedUpEmail = email;
         _signupComplete = true; // hide the input fields and show confirmation
       });
@@ -114,9 +111,6 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _isSendingVerification = true);
     try {
       await Supabase.instance.client.auth.signInWithOtp(email: email);
-      setState(() {
-        _verificationEmailSent = true;
-      });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Verification email sent. Check your inbox.')),
@@ -128,22 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  Future<void> _checkVerificationAndGoToLogin() async {
-    // After the user clicks the verification link, the client may be signed in.
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user != null) {
-      if (!mounted) return;
-      // Sign the user out so they can login normally on the login screen if you want
-      await Supabase.instance.client.auth.signOut();
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not verified yet. After clicking the link, come back and tap Verify.')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

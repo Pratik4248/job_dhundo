@@ -10,7 +10,11 @@ class JobCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final saved = ref.watch(savedProvider).contains(job);
+    final savedAsync = ref.watch(savedProvider);
+    final saved = savedAsync.maybeWhen(
+      data: (jobs) => jobs.any((j) => j.id == job.id),
+      orElse: () => false,
+    );
 
     return InkWell(
       onTap: () => Navigator.push(

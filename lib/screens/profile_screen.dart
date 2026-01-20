@@ -36,17 +36,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('No'),
             ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await Supabase.instance.client.auth.signOut();
-                if (!mounted) return;
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              },
-              child: const Text('Yes'),
-            ),
+           TextButton(
+  onPressed: () async {
+    Navigator.of(context).pop(); // close dialog
+
+    await Supabase.instance.client.auth.signOut();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
+  },
+  child: const Text('Yes'),
+),
           ],
         );
       },

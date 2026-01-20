@@ -13,7 +13,7 @@ class CommonHeader extends StatelessWidget {
         top: MediaQuery.of(context).padding.top + 20,
         left: 20,
         right: 20,
-        bottom: 18,
+        bottom: 22,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(

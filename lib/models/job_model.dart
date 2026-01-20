@@ -1,4 +1,5 @@
 class JobModel {
+  final String id;
   final String title;
   final String company;
   final String location;
@@ -8,6 +9,7 @@ class JobModel {
   final int? salaryMax;
 
   JobModel({
+    required this.id,
     required this.title,
     required this.company,
     required this.location,
@@ -19,6 +21,7 @@ class JobModel {
 
   factory JobModel.fromJson(Map<String, dynamic> json) {
     return JobModel(
+      id: json['id'] ?? '',
       title: json['title'] ?? '',
       company: json['company']?['display_name'] ?? '',
       location: json['location']?['display_name'] ?? '',
@@ -27,5 +30,18 @@ class JobModel {
       salaryMin: json['salary_min'],
       salaryMax: json['salary_max'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'company': {'display_name': company},
+      'location': {'display_name': location},
+      'description': description,
+      'redirect_url': redirectUrl,
+      'salary_min': salaryMin,
+      'salary_max': salaryMax,
+    };
   }
 }
