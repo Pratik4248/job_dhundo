@@ -11,9 +11,28 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+
+      if (session == null && mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
+    });
+  }
+
   String _getUserName() {
     final user = Supabase.instance.client.auth.currentUser;
-    if (user != null && user.userMetadata != null && user.userMetadata!['full_name'] != null) {
+    if (user != null &&
+        user.userMetadata != null &&
+        user.userMetadata!['full_name'] != null) {
       return user.userMetadata!['full_name'];
     }
     return 'User';
@@ -36,21 +55,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('No'),
             ),
-           TextButton(
-  onPressed: () async {
-    Navigator.of(context).pop(); // close dialog
-
-    await Supabase.instance.client.auth.signOut();
-
-    if (!mounted) return;
-
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (route) => false,
-    );
-  },
-  child: const Text('Yes'),
-),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // close dialog
+                await Supabase.instance.client.auth.signOut();
+              },
+              child: const Text('Yes'),
+            ),
           ],
         );
       },
@@ -109,7 +120,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-
             const SizedBox(height: 14),
 
             /// OPTIONS TITLE
@@ -135,7 +145,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 10),
 
-            /// LOGOUT
+            GestureDetector(
+              onTap: () {},
+              child: _optionTile(Icons.description, "My Resume"),
+            ),
+
+            const SizedBox(height: 10),
+
+            GestureDetector(
+              onTap: () {},
+              child: _optionTile(Icons.lightbulb_outline, "Skills"),
+            ),
+
+            const SizedBox(height: 10),
+
             GestureDetector(
               onTap: _showLogoutDialog,
               child: _optionTile(Icons.logout, "Log Out", color: Colors.red),
@@ -146,7 +169,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// OPTION TILE WIDGET
   Widget _optionTile(IconData icon, String title,
       {Color color = Colors.black}) {
     return Container(
@@ -155,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 4),
         ],
       ),

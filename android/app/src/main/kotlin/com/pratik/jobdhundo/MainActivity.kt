@@ -1,4 +1,4 @@
-package com.example.job_dhundo
+package com.pratik.jobdhundo
 
 import io.flutter.embedding.android.FlutterActivity
 
